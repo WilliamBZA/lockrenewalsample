@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="SqlScripts\CreateSchemaNsb.sql" />
+    <None Remove="SqlScripts\CreateTableEbmsPolicyData.sql" />
+    <None Remove="SqlScripts\ebmsClearEventTasks.sql" />
+    <None Remove="SqlScripts\ebmsGetRemaingTaskCount.sql" />
+    <None Remove="SqlScripts\ebmsInsertTaskProgress.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="SqlScripts\CreateSchemaNsb.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlScripts\CreateTableEbmsPolicyData.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlScripts\ebmsClearEventTasks.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlScripts\ebmsGetRemaingTaskCount.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlScripts\ebmsInsertTaskProgress.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.7.0" />
+    <PackageReference Include="NServiceBus" Version="7.7.3" />
+    <PackageReference Include="NServiceBus.Newtonsoft.Json" Version="2.4.0" />
+    <PackageReference Include="NServiceBus.Persistence.Sql" Version="6.5.1" />
+    <PackageReference Include="NServiceBus.Persistence.Sql.ScriptBuilder" Version="6.5.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+  </ItemGroup>
+
+</Project>

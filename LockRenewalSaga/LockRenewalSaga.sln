@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EBMS_v2.QueueAccessCore", "EBMS_v2.QueueAccessCore\EBMS_v2.QueueAccessCore.csproj", "{C884477E-7602-42C5-A42D-C9C989A218E9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EBMS_v2.Ngts.RapidWork.WorkerService", "EBMS_v2.Ngts.RapidWork.WorkerService\EBMS_v2.Ngts.RapidWork.WorkerService.csproj", "{F873850E-B2A1-4032-B901-EE44CF1F7868}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ngts.CatRun.BusOrchestration", "LockRenewalSagaTest.CatRun\Ngts.CatRun.BusOrchestration\Ngts.CatRun.BusOrchestration.csproj", "{A683DBD6-128D-48F8-827B-5F809A0721AE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Development|Any CPU = Development|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C884477E-7602-42C5-A42D-C9C989A218E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C884477E-7602-42C5-A42D-C9C989A218E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C884477E-7602-42C5-A42D-C9C989A218E9}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{C884477E-7602-42C5-A42D-C9C989A218E9}.Development|Any CPU.Build.0 = Development|Any CPU
+		{C884477E-7602-42C5-A42D-C9C989A218E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C884477E-7602-42C5-A42D-C9C989A218E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F873850E-B2A1-4032-B901-EE44CF1F7868}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F873850E-B2A1-4032-B901-EE44CF1F7868}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F873850E-B2A1-4032-B901-EE44CF1F7868}.Development|Any CPU.ActiveCfg = Debug|Any CPU
+		{F873850E-B2A1-4032-B901-EE44CF1F7868}.Development|Any CPU.Build.0 = Debug|Any CPU
+		{F873850E-B2A1-4032-B901-EE44CF1F7868}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F873850E-B2A1-4032-B901-EE44CF1F7868}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A683DBD6-128D-48F8-827B-5F809A0721AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A683DBD6-128D-48F8-827B-5F809A0721AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A683DBD6-128D-48F8-827B-5F809A0721AE}.Development|Any CPU.ActiveCfg = Debug|Any CPU
+		{A683DBD6-128D-48F8-827B-5F809A0721AE}.Development|Any CPU.Build.0 = Debug|Any CPU
+		{A683DBD6-128D-48F8-827B-5F809A0721AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A683DBD6-128D-48F8-827B-5F809A0721AE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {29B7C0D9-6224-4209-8289-37FF0E27C6E9}
+	EndGlobalSection
+EndGlobal
