@@ -1,7 +1,6 @@
 ﻿using NServiceBus;
 using NServiceBus.Logging;
 using System;
-using NServiceBus.Extensibility;
 using System.Threading.Tasks;
 
 namespace Ngts.CatRun.BusOrchestration
@@ -14,13 +13,16 @@ namespace Ngts.CatRun.BusOrchestration
 
         public async Task Handle(AnnualTaxRun message, IMessageHandlerContext context)
         {
-            const int taskCount = 20;
+            const int taskCount = 7;
 
             var jobId = Guid.NewGuid();
             _logger.Info($"{HandlerBase.timeStamp(false)} Handle(AnnualTaxRun Initiated; TaxRunId: {jobId} - completes at about {DateTime.Now.AddMinutes(taskCount).ToString(HandlerBase.logTimeFormat)}.");
 
             // setup policy before initiating tasks
             InitiatePolicy(jobId, 1, taskCount);
+
+            var startSaga = new InitiateSaga { JobId = jobId, SagaTaskCount = taskCount };
+            await SendMessage(context, startSaga);
 
             for (int i = 1; i <= taskCount; i++)
             {

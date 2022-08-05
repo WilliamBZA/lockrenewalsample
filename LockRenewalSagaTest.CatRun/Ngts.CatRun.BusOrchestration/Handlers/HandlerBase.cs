@@ -95,23 +95,23 @@ namespace Ngts.CatRun.BusOrchestration
 
         private void AddTaskProgress(Guid jobId, int sagaEventId, int? taskId, int? totalRecordCount, string json = null)
         {
-            //using (var sqlConnection = new SqlConnection(_nServiceBusState))
-            //{
-            //    sqlConnection.Open();
-            //    using (SqlCommand sqlCommand = sqlConnection.CreateCommand())
-            //    {
-            //        sqlCommand.CommandText = "nsb.ebmsInsertTaskProgress";
-            //        sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
-            //        sqlCommand.Parameters.Add(new SqlParameter("@JobId", jobId));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@EventId", sagaEventId));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@TaskId", taskId));
-            //        if (totalRecordCount.HasValue)
-            //            sqlCommand.Parameters.Add(new SqlParameter("@TotalTaskCount", totalRecordCount));
-            //        if (json != null)
-            //           sqlCommand.Parameters.Add(new SqlParameter("@Json", json));
-            //        sqlCommand.ExecuteNonQuery();
-            //    }
-            //}
+            using (var sqlConnection = new SqlConnection(_nServiceBusState))
+            {
+                sqlConnection.Open();
+                using (SqlCommand sqlCommand = sqlConnection.CreateCommand())
+                {
+                    sqlCommand.CommandText = "nsb.ebmsInsertTaskProgress";
+                    sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                    sqlCommand.Parameters.Add(new SqlParameter("@JobId", jobId));
+                    sqlCommand.Parameters.Add(new SqlParameter("@EventId", sagaEventId));
+                    sqlCommand.Parameters.Add(new SqlParameter("@TaskId", taskId));
+                    if (totalRecordCount.HasValue)
+                        sqlCommand.Parameters.Add(new SqlParameter("@TotalTaskCount", totalRecordCount));
+                    if (json != null)
+                       sqlCommand.Parameters.Add(new SqlParameter("@Json", json));
+                    sqlCommand.ExecuteNonQuery();
+                }
+            }
         }
 
         public int? GetRemaingTaskCount(Guid jobId,int eventId)
