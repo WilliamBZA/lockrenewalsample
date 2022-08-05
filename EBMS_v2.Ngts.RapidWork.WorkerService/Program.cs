@@ -108,8 +108,8 @@ namespace EBMS_v2.Ngts.RapidWork.WorkerService
             //CWS 03/24/21 - Make the Queue max-size configurable.
             transport.ConnectionString(connectionString);
             transport.EntityMaximumSize(nServiceBusConfig.EntityMaximumSize);
-            //transport.PrefetchCount(0);
-            //transport.PrefetchMultiplier(1);
+            transport.PrefetchCount(0);
+            transport.PrefetchMultiplier(1);
 
             var persistence = endpointConfiguration.UsePersistence<SqlPersistence>();
             persistence.SqlDialect<SqlDialect.MsSqlServer>()
