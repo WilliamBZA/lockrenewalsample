@@ -21,7 +21,7 @@ namespace EBMS_v2.QueueAccessCore.LockRenewals
         public LockRenewalBehavior(TimeSpan lockDuration, TimeSpan renewLockTokenIn, string queueName)
         {
             this.lockDuration = lockDuration;
-            this.renewLockTokenIn = TimeSpan.FromSeconds(25);
+            this.renewLockTokenIn = renewLockTokenIn;
             this.queueName = queueName;
         }
 
@@ -94,7 +94,7 @@ namespace EBMS_v2.QueueAccessCore.LockRenewals
                         }
                         catch (ServiceBusException e) when (e.Reason == ServiceBusFailureReason.MessageLockLost)
                         {
-                            //Log.Error($"{message.MessageId}: Lock lost.", e);
+                            Log.Error($"{message.MessageId}: Lock lost.", e);
                             return;
                         }
                         catch (Exception e) when (!(e is OperationCanceledException))

@@ -20,10 +20,6 @@ using System.Transactions;
 namespace EBMS_v2.Ngts.RapidWork.WorkerService
 {
     public class Program
-        // set startup
-        // create DB called ServiceBusPlay
-        // update settings to include both sql conn and azure
-        // run the powershell script to start
     {
         public static void Main(string[] args)
         {
@@ -38,11 +34,6 @@ namespace EBMS_v2.Ngts.RapidWork.WorkerService
                     configApp.AddJsonFile($"{exeFolderPath}appSettings.json", optional: false, reloadOnChange: true)
                              .AddJsonFile($"{exeFolderPath}appSettings.{hostContext.HostingEnvironment.EnvironmentName}.json", optional: true);
                 })
-                .UseNServiceBus(hostContext =>
-                {
-                    EndpointConfiguration endpointConfiguration = SetupNServiceBusEndpoints(hostContext);
-                    return endpointConfiguration;
-                })
                 .ConfigureLogging((hostContext, logBuilder) =>
                 {
                     var instrumetationKey = hostContext.Configuration.GetValue<string>("ApplicationInsights:InstrumentationKey");
@@ -55,7 +46,6 @@ namespace EBMS_v2.Ngts.RapidWork.WorkerService
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<Worker>();
-                    services.AddHostedService<SendWorker>();
                     var serviceBusSettings = new ServiceBusSettings(
                         hostContext.GetConfig<ConnectionStrings>().AzureServiceBus,
                         hostContext.GetConfig<ConnectionStrings>().NServiceBusState,
@@ -63,7 +53,13 @@ namespace EBMS_v2.Ngts.RapidWork.WorkerService
                     );
                     services.AddSingleton(typeof(ServiceBusSettings), serviceBusSettings);
 
+                    services.AddHostedService<Worker>();
                     HandlerBase.InitializeSql(hostContext.GetConfig<ConnectionStrings>().NServiceBusState);
+                })
+                .UseNServiceBus(hostContext =>
+                {
+                    EndpointConfiguration endpointConfiguration = SetupNServiceBusEndpoints(hostContext);
+                    return endpointConfiguration;
                 });
 
         static Action<string, object> SetTransactionManagerField = (fieldName, value) =>
@@ -81,14 +77,14 @@ namespace EBMS_v2.Ngts.RapidWork.WorkerService
             if (!string.IsNullOrWhiteSpace(nServiceBusConfig.AuditQueue))
                 endpointConfiguration.AuditProcessedMessagesTo(nServiceBusConfig.AuditQueue);
 
-            //endpointConfiguration.LimitMessageProcessingConcurrencyTo(1);
+            endpointConfiguration.LimitMessageProcessingConcurrencyTo(nServiceBusConfig.MaxMessageProcessingConcurrency);
 
             // https://docs.particular.net/samples/azure-service-bus-netstandard/lock-renewal/#overriding-the-value-of-transactionmanager-maxtimeout
             // extend the AzureServiceBus timeout beyond the 10 minute default
             // Note: the transaction timeout timespan needs to be long enought to
             //       allow for the longest running message handler to complete
             SetTransactionManagerField("s_cachedMaxTimeout", true);
-            SetTransactionManagerField("s_maximumTimeout", TimeSpan.FromMinutes(45));
+            SetTransactionManagerField("s_maximumTimeout", TimeSpan.FromMinutes(nServiceBusConfig.TotalTransactionTimeSpanMins));
 
             //CWS 03/24/21 - Let NServiceBus create these queues for us...
             if (nServiceBusConfig.EnableInstallers)
@@ -108,16 +104,14 @@ namespace EBMS_v2.Ngts.RapidWork.WorkerService
             //CWS 03/24/21 - Make the Queue max-size configurable.
             transport.ConnectionString(connectionString);
             transport.EntityMaximumSize(nServiceBusConfig.EntityMaximumSize);
-            transport.PrefetchCount(0);
-            transport.PrefetchMultiplier(1);
 
             var persistence = endpointConfiguration.UsePersistence<SqlPersistence>();
             persistence.SqlDialect<SqlDialect.MsSqlServer>()
                 .Schema(nServiceBusConfig.SqlPersistentSchema);
 
             persistence.ConnectionBuilder(() => new SqlConnection(connectionsConfig.NServiceBusState));
-            //var subscriptions = persistence.SubscriptionSettings();
-            //subscriptions.CacheFor(TimeSpan.FromMinutes(1));
+            var subscriptions = persistence.SubscriptionSettings();
+            subscriptions.CacheFor(TimeSpan.FromMinutes(1));
 
             //CWS 03/12/21 - IMPORTANT---
             //Crucial settings for extremely long-running transactions that are occuring on Azure Service Bus.
@@ -128,8 +122,8 @@ namespace EBMS_v2.Ngts.RapidWork.WorkerService
             settings.Set<LockRenewalOptions>(
                 new LockRenewalOptions()
                 {
-                    LockDuration = TimeSpan.FromSeconds(30),
-                    ExecuteRenewalBefore = TimeSpan.FromSeconds(5),
+                    LockDuration = TimeSpan.FromSeconds(nServiceBusConfig.MessageLockTimeSpanSeconds),
+                    ExecuteRenewalBefore = TimeSpan.FromSeconds(30),
                     EndpointName = nServiceBusConfig.MainQueueName
                 });
 
@@ -137,8 +131,8 @@ namespace EBMS_v2.Ngts.RapidWork.WorkerService
             routing.RouteToEndpoint(typeof(AnnualTaxRun).Assembly, nServiceBusConfig.MainQueueName);
 
             RecoverabilitySettings recoverStgs = endpointConfiguration.Recoverability();
-            recoverStgs.Immediate((retrySettings) => retrySettings.NumberOfRetries(0));
-            recoverStgs.Delayed((retrySettings) => retrySettings.NumberOfRetries(0));
+            recoverStgs.Immediate((retrySettings) => retrySettings.NumberOfRetries(nServiceBusConfig.ImmediateRetryCount));
+            recoverStgs.Delayed((retrySettings) => retrySettings.NumberOfRetries(nServiceBusConfig.DelayedRetryCount));
 
             //CWS 03/24/21 - Setup a policy where the message that takes 2 hours to process does NOT automatically 
             //retry if it fails... and allow the other normal messages to retry since their failure is faster and 

@@ -1,5 +1,4 @@
-﻿using Azure.Messaging.ServiceBus;
-using NServiceBus;
+﻿using NServiceBus;
 using NServiceBus.Logging;
 using System;
 using System.Threading.Tasks;
@@ -14,13 +13,13 @@ namespace Ngts.CatRun.BusOrchestration
 
         public async Task Handle(TaskMessage message, IMessageHandlerContext context)
         {
-            var nativeMessageId = context.Extensions.Get<ServiceBusReceivedMessage>().MessageId;
+            _logger.Info($"{timeStamp(false)} Invoking MessageHandler - completes in {message.TaskDuration.TotalSeconds} seconds at {DateTime.Now.Add(message.TaskDuration).ToString("H:mm:ss tt").ToLower()}");
 
-            _logger.Info($"{timeStamp(false)} Invoking MessageHandler - completes in {message.TaskDuration.TotalSeconds} seconds at {DateTime.Now.Add(message.TaskDuration).ToString("H:mm:ss tt").ToLower()} for message Id: {nativeMessageId} (nsb id: {context.MessageId})");
 
             await Task.Delay((int)message.TaskDuration.TotalSeconds * 1000).ConfigureAwait(false);
 
-            // AddTaskProgress(message.JobId, 1, message.TaskId, message);
+
+            AddTaskProgress(message.JobId, 1, message.TaskId, message);
             _logger.Info($"{timeStamp(true)} After {message.TaskDuration}, TaskId {message.TaskId} MessageHandler COMPLETED");
         }
     }

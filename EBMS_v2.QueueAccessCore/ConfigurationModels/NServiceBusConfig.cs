@@ -15,10 +15,10 @@ namespace EBMS_v2.QueueAccessCore.ConfigurationModels
         public int MaxMessageProcessingConcurrency { get; set; } = 0; // 0 == use default of processor count;
         public bool EnableInstallers { get; set; } = true;
         public string SqlPersistentSchema { get; set; } = "nsb";
-        public int ImmediateRetryCount { get; set; } = 0;
-        public int DelayedRetryCount { get; set; } = 0;
-        public int PrefetchCount { get; set; } = 0;
-        public int PrefetchMultiplier { get; set; } = 0;
+        public int ImmediateRetryCount { get; set; } = 5;
+        public int DelayedRetryCount { get; set; } = 3;
+        public int PrefetchCount { get; set; } = 50;
+        public int PrefetchMultiplier { get; set; } = 10;
         public bool EnablePartitioning { get; set; } = true;
         public int EntityMaximumSize { get; set; } = 5;
         public int LimitMessageProcessingConcurrencyTo { get; set; } = 0;
